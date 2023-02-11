@@ -18,7 +18,7 @@ namespace MediaCollector.ViewModels
             get => _isBusy;
             set
             {
-                SetValue(_isBusy, value);
+                SetValue(ref _isBusy, value);
             }
         }
 
@@ -39,10 +39,9 @@ namespace MediaCollector.ViewModels
             OnPropertyChanged(propertyName);
         }
 
-        protected void SetValue<T>(T backingFiled, T value, [CallerMemberName] string propertyName = null)
+        protected void SetValue(Action updateDeledate, [CallerMemberName] string propertyName = null)
         {
-            if (EqualityComparer<T>.Default.Equals(backingFiled, value)) return;
-            backingFiled = value;
+            updateDeledate();
             OnPropertyChanged(propertyName);
         }
     }

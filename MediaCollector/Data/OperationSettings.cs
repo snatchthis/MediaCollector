@@ -7,12 +7,12 @@ namespace MediaCollector.Data
 		{
 			SourceArchive = string.Empty;
 			TargetDirectory = string.Empty;
-			MediaFilesExtensions = new List<string>();
+			MediaFilesExtensions = new string[] {string.Empty};
 		}
 
 		public string SourceArchive { get; set; }
 		public string TargetDirectory { get; set; }
-		public List<string> MediaFilesExtensions { get; set; }
+		public string[] MediaFilesExtensions { get; set; }
 	}
 }
 

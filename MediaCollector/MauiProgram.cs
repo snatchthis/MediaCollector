@@ -33,6 +33,9 @@ public static class MauiProgram
 #if MACCATALYST
 		builder.Services.AddTransient<IFolderPicker, MediaCollector.Platforms.MacCatalyst.FolderPicker>();
 #endif
+#if WINDOWS
+		builder.Services.AddSingleton<IFolderPicker, MediaCollector.Platforms.Windows.FolderPicker>();
+#endif
 
 		return builder.Build();
 	}

@@ -11,7 +11,7 @@ namespace MediaCollector.ViewModels
 {
 	public class InputFormViewModel : AbstractViewModel<OperationSettings>
 	{
-		private ObservableCollection<string> _mediaFileExtensions;
+		private string[] _mediaFileExtensions;
 		private IFilePickerService _filePicker;
         private IFolderPicker _folderPicker;
 		private FileNameParser _parser;
@@ -27,22 +27,16 @@ namespace MediaCollector.ViewModels
         }
 
         public string SourceArchive
-		{
-			get => Model.SourceArchive;
-			set
-			{
-				SetValue(Model.SourceArchive, value);
-			}
-		}
+        {
+            get => Model.SourceArchive;
+            set => SetValue(() => Model.SourceArchive = value);
+        }
 
-		public string TargetDirectory
+        public string TargetDirectory
 		{
 			get => Model.TargetDirectory;
-			set
-			{
-				SetValue(Model.TargetDirectory, value);
-			}
-		}
+            set => SetValue(() => Model.TargetDirectory = value);
+        }
 
 		public string CurrentFile
 		{
@@ -53,21 +47,11 @@ namespace MediaCollector.ViewModels
 			}
 		}
 
-		public Collection<string> MediaFileExtensions
+		public string[] MediaFileExtensions
 		{
-			get => _mediaFileExtensions;
-			set
-			{
-				if (_mediaFileExtensions == null)
-				{
-					_mediaFileExtensions = new ObservableCollection<string>(value);
-					_mediaFileExtensions.CollectionChanged += (sender, e) => OnPropertyChanged();
-				}
-
-				SetValue(_mediaFileExtensions, value);
-				
-			}
-		}
+			get => Model.MediaFilesExtensions;
+            set => SetValue(() => Model.MediaFilesExtensions = value);
+        }
 
         public async Task SelectArchive()
         {
