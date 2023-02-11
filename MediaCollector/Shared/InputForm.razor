@@ -1,0 +1,57 @@
+﻿@using MediaCollector.ViewModels
+@using MediaCollector.Data
+
+
+@inherits ContextComponent<InputFormViewModel>
+
+ 
+<div class="container">
+    <h1>File Copy Application</h1>
+
+
+    <div class="form-group">
+        <label for="sourceFolder">Source Folder:</label>
+        <input type="text" class="form-control" id="sourceArchive" @onclick="DataContext.SelectArchive" @bind="DataContext.SourceArchive" disabled="@DataContext.IsBusy" />
+    </div>
+    <br />
+    <div class="form-group">
+        <label for="targetFolder">Target Folder:</label>
+        <input type="text" class="form-control" id="targetFolder" @onclick="DataContext.PickFolder" @bind="DataContext.TargetDirectory" disabled="@DataContext.IsBusy" />
+    </div>
+    <br />
+    <div class="form-group">
+        <label for="fileExtensions">File Extensions:</label>
+        <select id="fileExtensions" multiple @bind="DataContext.MediaFileExtensions">
+            <option value="">All Files</option>
+            <option value=".jpg">JPEG Images</option>
+            <option value=".jpeg">JPEG Images</option>
+            <option value=".png">PNG Images</option>
+            <option value=".mp4">MP4 Videos</option>
+            <option value=".avi">AVI Videos</option>
+        </select>
+    </div>
+    <br />
+    <button class="btn btn-primary" type="button" @onclick="DataContext.CollectFiles" disabled="@DataContext.IsBusy">
+        @if (DataContext.IsBusy)
+        {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        }
+
+        @(DataContext.IsBusy ? "Copying" : "Copy Files")
+
+    </button>
+
+    <br />
+    @if (DataContext.IsBusy)
+    {
+        <div class="form-group">
+
+            <label>Copying File: @DataContext.CurrentFile</label>
+
+        </div>
+    }
+
+
+</div>
+
+
