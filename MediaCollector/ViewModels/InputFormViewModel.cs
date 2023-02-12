@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Windows.Input;
 using MediaCollector.Data;
@@ -26,12 +27,14 @@ namespace MediaCollector.ViewModels
 			_parser = parser;
         }
 
+        [Required(AllowEmptyStrings = false)]
         public string SourceArchive
         {
             get => Model.SourceArchive;
             set => SetValue(() => Model.SourceArchive = value);
         }
 
+        [Required(AllowEmptyStrings = false)]
         public string TargetDirectory
 		{
 			get => Model.TargetDirectory;
@@ -47,6 +50,7 @@ namespace MediaCollector.ViewModels
 			}
 		}
 
+        [Required, MinLength(2)]
 		public string[] MediaFileExtensions
 		{
 			get => Model.MediaFilesExtensions;
