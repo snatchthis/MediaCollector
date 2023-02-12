@@ -12,12 +12,11 @@
         <div class="form-group">
             <label for="sourceFolder">Source Folder:</label>
             <InputText type="text" class="form-control" id="sourceArchive" @onclick="DataContext.SelectArchive" @bind-Value="DataContext.SourceArchive" disabled="@DataContext.IsBusy" />
-            
         </div>
         <br />
         <div class="form-group">
             <label for="targetFolder">Target Folder:</label>
-            <InputText type="text" class="form-control" id="targetFolder" @onclick="DataContext.PickFolder" @bind="DataContext.TargetDirectory" disabled="@DataContext.IsBusy" />
+            <InputText type="text" class="form-control" id="targetFolder" @onclick="DataContext.PickFolder" @bind-Value="DataContext.TargetDirectory" disabled="@DataContext.IsBusy" />
         </div>
         <br />
         <div class="form-group">
