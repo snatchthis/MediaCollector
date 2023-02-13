@@ -5,7 +5,10 @@ namespace MediaCollector.Services
 {
 	public partial class FileNameParser
 	{
-		public FileNameParser()
+        [GeneratedRegex("([^\\\\/]+\\.[^\\\\/]+)$")]
+        private static partial Regex FileNameRegex();
+
+        public FileNameParser()
 		{
 		}
 
@@ -22,9 +25,6 @@ namespace MediaCollector.Services
 
 			return result;
         }
-
-        [GeneratedRegex("([^\\\\/]+\\.[^\\\\/]+)$")]
-        private static partial Regex FileNameRegex();
     }
 }
 

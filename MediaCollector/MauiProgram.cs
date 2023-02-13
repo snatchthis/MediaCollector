@@ -28,6 +28,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<OperationSettings>();
 		builder.Services.AddSingleton<InputFormViewModel>();
 		builder.Services.AddSingleton<FileNameParser>();
+		builder.Services.AddSingleton<ExtractService>();
 		builder.Services.AddSingleton<IFilePickerService, TarFilePickerService>();
 
 #if MACCATALYST

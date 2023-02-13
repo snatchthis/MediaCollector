@@ -36,7 +36,6 @@ namespace MediaCollector.Platforms.MacCatalyst
 
         public async Task<string> PickFolder()
         {
-
             var allowedTypes = new string[]
             {
               "public.folder"

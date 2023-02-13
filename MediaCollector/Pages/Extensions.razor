@@ -1,0 +1,74 @@
+﻿@page "/extensions"
+@using MediaCollector.Services
+@using ICSharpCode.SharpZipLib.Tar
+@using System.Text
+
+<div class="container">
+    <h1>File Copy Application</h1>
+
+    <div class="form-group">
+        <label for="sourceFolder">Source Folder:</label>
+        <input type="text" class="form-control" id="sourceArchive" @onclick="SelectArchive" value="@sourceArchive" disabled="@isBusy" />
+    </div>
+    <div class="form-group">
+        <label for="fileExtensions">File Extensions:</label>
+        <table>
+            <tbody>
+                @foreach (var extension in extensions)
+                    {
+                <tr>
+                    <td>@extension</td>
+                </tr>
+                    }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code
+{
+    private string sourceArchive = string.Empty;
+    private bool isBusy = false;
+    private TarFilePickerService tarFilePickService = new TarFilePickerService();
+    private Stream tarStream;
+    private List<string> extensions = new List<string>();
+
+    private async Task SelectArchive()
+    {
+        var foo = await tarFilePickService.PickFile();
+        isBusy = true;
+        StateHasChanged();
+        tarStream = await foo.OpenReadAsync();
+        var token = new CancellationToken();
+        try
+        {
+            using (var tarInputStream = new TarInputStream(tarStream, Encoding.UTF8))
+            {
+                TarEntry tarEntry;
+                while ((tarEntry = await tarInputStream.GetNextEntryAsync(token)) != null)
+                {
+                    if (!tarEntry.IsDirectory)
+                    {
+                        FileInfo fi = new FileInfo(tarEntry.Name);
+                        if (!extensions.Contains(fi.Extension))
+                        {
+                            extensions.Add(fi.Extension);
+
+                            StateHasChanged();
+                        }
+                    }
+
+
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        isBusy = false;
+        StateHasChanged();
+    }
+
+}

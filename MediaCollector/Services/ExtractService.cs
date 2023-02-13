@@ -2,16 +2,19 @@
 using System.IO;
 using System.Text;
 using ICSharpCode.SharpZipLib.Tar;
+using MediaCollector.Data;
 
 namespace MediaCollector.Services
 {
     public class ExtractService
-    { 
+    {
+        private readonly OperationSettings _settings;
+
         public event EventHandler<FileExtractedEventArgs> FileExtracted;
 
-        public ExtractService()
+        public ExtractService(OperationSettings settings)
         {
-
+            _settings = settings;
         }
 
         public async Task ExtractFiles(Stream archiveStream, CancellationToken token)
@@ -23,15 +26,16 @@ namespace MediaCollector.Services
                     TarEntry tarEntry;
                     while ((tarEntry = await tarInputStream.GetNextEntryAsync(token)) != null)
                     {
-                        
+                        if (GuidMatchService.ContainsGuid(tarEntry.Name))
+                            continue;
+
                         using (var memoryStream = new MemoryStream())
                         {
                             await tarInputStream.CopyEntryContentsAsync(memoryStream, token);
                             memoryStream.Seek(0, SeekOrigin.Begin);
-
-                            if (!tarEntry.IsDirectory && tarEntry.Name.EndsWith(".heic", StringComparison.OrdinalIgnoreCase))
-                            {
-                                
+                            
+                            if (!tarEntry.IsDirectory && _settings.MediaFilesExtensions.Any(x => tarEntry.Name.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
+                            { 
                                 OnFileExtracted(new FileExtractedEventArgs(tarEntry.Name, memoryStream));
                             }
                         }

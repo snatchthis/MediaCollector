@@ -19,12 +19,15 @@ namespace MediaCollector.ViewModels
 		private FileCopyService _fileCopyService;
 		private FileResult _archive;
 		private string _currentFile;
+        private ExtractService _extractService;
 
-        public InputFormViewModel(OperationSettings settings, IFilePickerService filePicker, IFolderPicker folderPicker, FileNameParser parser, FileCopyService fileCopyService) : base(settings)
+        public InputFormViewModel(OperationSettings settings, IFilePickerService filePicker, IFolderPicker folderPicker, FileNameParser parser, FileCopyService fileCopyService, ExtractService extractService) : base(settings)
         {
 			_filePicker = filePicker;
 			_folderPicker = folderPicker;
 			_parser = parser;
+            _extractService = extractService;
+            _fileCopyService = fileCopyService;
         }
 
         [Required(AllowEmptyStrings = false)]
@@ -50,7 +53,7 @@ namespace MediaCollector.ViewModels
 			}
 		}
 
-        [Required, MinLength(2)]
+        [Required, MinLength(1)]
 		public string[] MediaFileExtensions
 		{
 			get => Model.MediaFilesExtensions;
@@ -82,10 +85,10 @@ namespace MediaCollector.ViewModels
 		{
             var parser = new FileNameParser();
             CancellationToken token = new CancellationToken();
-            var extractService = new ExtractService();
+
             if (_archive != null)
             {
-                extractService.FileExtracted += async (o, e) =>
+                _extractService.FileExtracted += async (o, e) =>
                 {
                     var fileName = parser.ExtractFileName(e.FileName);
                     await CopyFiles(fileName, e.FileData);
@@ -94,7 +97,7 @@ namespace MediaCollector.ViewModels
                 };
 
                 var archiveStream = await _archive.OpenReadAsync();
-                await extractService.ExtractFiles(archiveStream, token);
+                await _extractService.ExtractFiles(archiveStream, token);
             }
         }
 
