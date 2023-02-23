@@ -1,4 +1,4 @@
-﻿namespace MediaCollector.Data
+﻿namespace MediaCollector.Services
 {
     public class FileCopyService
     {
@@ -9,18 +9,18 @@
             var targetPath = Path.Combine(targetFolder, Path.GetFileName(fileName));
             try
             {
-                
+
                 var foo = FileSystem.AppDataDirectory;
                 using (var targetStream = new FileStream(targetPath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true))
                 {
                     await fileData.CopyToAsync(targetStream);
                 }
                 copiedFiles++;
-                progressCallback?.Invoke((int)((double)copiedFiles));
+                progressCallback?.Invoke((int)(double)copiedFiles);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                
+
             }
         }
     }

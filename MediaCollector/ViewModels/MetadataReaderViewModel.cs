@@ -35,32 +35,22 @@ namespace MediaCollector.ViewModels
                 File = _fileToRead.FileName;
         }
 
-        
         public async Task ReadMetadata()
         {
             MetadataEntries.Clear();
-            //await Task.Run(async () =>
-            //    {
-            try
+
+            var directories = ImageMetadataReader.ReadMetadata(await _fileToRead.OpenReadAsync());
+
+            foreach (var directory in directories)
             {
-                
-                var directories = ImageMetadataReader.ReadMetadata(await _fileToRead.OpenReadAsync());
-
-                foreach (var directory in directories)
+                foreach (var tag in directory.Tags)
                 {
-                    foreach (var tag in directory.Tags)
-                    {
 
-                        MetadataEntries.Add(new MetadataEntry(tag.Name, tag.Type.ToString(), tag.Description));
-                        OnPropertyChanged();
-                    }
+                    MetadataEntries.Add(new MetadataEntry(tag.Name, tag.Type.ToString(), tag.Description));
+                    OnPropertyChanged();
                 }
             }
-            catch (Exception ex)
-            {
 
-            }
-            //});
         }
     }
 }

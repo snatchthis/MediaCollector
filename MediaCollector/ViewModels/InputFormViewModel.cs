@@ -11,7 +11,7 @@ using MediaCollector.Services;
 
 namespace MediaCollector.ViewModels
 {
-	public class InputFormViewModel : AbstractViewModel<OperationSettings>
+    public class InputFormViewModel : AbstractViewModel<OperationSettings>
 	{
 		private string[] _mediaFileExtensions;
 		private IFilePickerService _filePicker;
