@@ -12,7 +12,7 @@ namespace MediaCollector.Services
 
         public async Task MoveFile(string targetFolder, string filePath)
         {
-            int? year = _metadataService.GetYear(filePath);
+            int? year = _metadataService.GetYearTakenFromImage(filePath);
             if (year.HasValue)
             {
                 string yearFolder = Path.Combine(targetFolder, year.ToString());

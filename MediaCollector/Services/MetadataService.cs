@@ -1,5 +1,4 @@
-﻿using System;
-using MetadataExtractor;
+﻿using MetadataExtractor;
 
 namespace MediaCollector.Services
 {
@@ -7,7 +6,8 @@ namespace MediaCollector.Services
     {
         TAG_36867 = 36867,
         TAG_320 = 320,
-        TAG_3 = 3
+        TAG_3 = 3,
+        TAG_306 = 306
     }
 
     public class MetadataService
@@ -18,34 +18,45 @@ namespace MediaCollector.Services
             
         }
 
-        public int? GetYear(string filePath)
+        public int? GetYearTakenFromImage(string filePath)
+        {
+            var directoriesWithPossibleDateTags = GetDirectoriesWithPossibleDateTags(filePath);
+
+            if (directoriesWithPossibleDateTags != null)
+            {
+                var earliestDateTaken = directoriesWithPossibleDateTags
+                    .Select(directory => GetDateFromTag(directory, DateTag.TAG_36867) ??
+                                          GetDateFromTag(directory, DateTag.TAG_320) ??
+                                          GetDateFromTag(directory, DateTag.TAG_3) ??
+                                          GetDateFromTag(directory, DateTag.TAG_306))
+                    .Where(dateTaken => dateTaken.HasValue)
+                    .OrderBy(dateTaken => dateTaken.Value)
+                    .FirstOrDefault();
+
+                if (earliestDateTaken.HasValue)
+                {
+                    return earliestDateTaken.Value.Year;
+                }
+            }
+
+            return null;
+        }
+
+        private IEnumerable<MetadataExtractor.Directory> GetDirectoriesWithPossibleDateTags(string filePath)
         {
             try
             {
                 var allDirectories = ImageMetadataReader.ReadMetadata(filePath);
-                var directoriesWithPossibleDateTags = allDirectories.Where(x => x.ContainsTag((int)DateTag.TAG_36867)
-                                                                        || x.ContainsTag((int)DateTag.TAG_320)
-                                                                        || x.ContainsTag((int)DateTag.TAG_3));
-                if(directoriesWithPossibleDateTags != null)
-                {
-                    foreach(var directory in directoriesWithPossibleDateTags)
-                    {
-                        DateTime? dateTaken = GetDateFromTag(directory, DateTag.TAG_36867);
-                        if (!dateTaken.HasValue)
-                            dateTaken = GetDateFromTag(directory, DateTag.TAG_320);
-                        if (!dateTaken.HasValue)
-                            dateTaken = GetDateFromTag(directory, DateTag.TAG_3);
-                        if (dateTaken.HasValue)
-                            return dateTaken.Value.Year;
-                    }
-                }
+                return allDirectories.Where(directory => directory.ContainsTag((int)DateTag.TAG_36867)
+                                                      || directory.ContainsTag((int)DateTag.TAG_320)
+                                                      || directory.ContainsTag((int)DateTag.TAG_3)
+                                                      || directory.ContainsTag((int)DateTag.TAG_306));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-
+                // log or handle the exception appropriately
+                return null;
             }
-
-            return null;
         }
 
         private DateTime? GetDateFromTag(MetadataExtractor.Directory direcotry, DateTag tag)

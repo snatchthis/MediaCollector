@@ -48,8 +48,6 @@ namespace MediaCollector.ViewModels
 
                 foreach (var directory in directories)
                 {
-                    
-
                     foreach (var tag in directory.Tags)
                     {
 

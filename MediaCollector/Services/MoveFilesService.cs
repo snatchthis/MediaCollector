@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using MediaCollector.Data;
 
 namespace MediaCollector.Services
@@ -18,20 +19,19 @@ namespace MediaCollector.Services
 
         public async Task MoveFiles()
         {
-            await Task.Run(async () =>
+            if (!string.IsNullOrEmpty(_moveSettings.SourceFolder)
+                && Directory.Exists(_moveSettings.SourceFolder)
+                && !string.IsNullOrEmpty(_moveSettings.TargetFolder)
+                && Directory.Exists(_moveSettings.TargetFolder))
             {
-                if (!string.IsNullOrEmpty(_moveSettings.SourceFolder)
-                    && Directory.Exists(_moveSettings.SourceFolder)
-                    && !string.IsNullOrEmpty(_moveSettings.TargetFolder)
-                    && Directory.Exists(_moveSettings.TargetFolder))
+                var filesToMove = Directory.EnumerateFiles(_moveSettings.SourceFolder, "*.*", SearchOption.AllDirectories);
+
+                await Task.WhenAll(filesToMove.Select(async sourceFilePath =>
                 {
-                    foreach (var sourceFilePath in Directory.EnumerateFiles(_moveSettings.SourceFolder, "*.*", SearchOption.AllDirectories))
-                    {
-                        await _moveToYearService.MoveFile(_moveSettings.TargetFolder, sourceFilePath);
-                        OnFileProcessed(sourceFilePath);
-                    }
-                }
-            });
+                    await _moveToYearService.MoveFile(_moveSettings.TargetFolder, sourceFilePath);
+                    OnFileProcessed(sourceFilePath);
+                }));
+            }
         }
 
         protected virtual void OnFileProcessed(string e)

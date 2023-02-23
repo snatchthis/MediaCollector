@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Runtime.InteropServices.ObjectiveC;
 using System.Windows.Input;
 using MediaCollector.Data;
 using MediaCollector.Services;
@@ -16,18 +17,21 @@ namespace MediaCollector.ViewModels
 		private IFilePickerService _filePicker;
         private IFolderPicker _folderPicker;
 		private FileNameParser _parser;
-		private FileCopyService _fileCopyService;
+        private readonly ExtractService _extractService;
+        private readonly FileNameParser _fileNameParser;
+        private FileCopyService _fileCopyService;
 		private FileResult _archive;
 		private string _currentFile;
-        private ExtractService _extractService;
 
-        public InputFormViewModel(OperationSettings settings, IFilePickerService filePicker, IFolderPicker folderPicker, FileNameParser parser, FileCopyService fileCopyService, ExtractService extractService) : base(settings)
+        public InputFormViewModel(OperationSettings settings, IFilePickerService filePicker, IFolderPicker folderPicker, FileNameParser parser, ExtractService extractService, FileNameParser fileNameParser) : base(settings)
         {
 			_filePicker = filePicker;
 			_folderPicker = folderPicker;
 			_parser = parser;
             _extractService = extractService;
-            _fileCopyService = fileCopyService;
+            _fileNameParser = fileNameParser;
+
+            _extractService.FileExtracted += OnFileExtracted;
         }
 
         [Required(AllowEmptyStrings = false)]
@@ -53,7 +57,7 @@ namespace MediaCollector.ViewModels
 			}
 		}
 
-        [Required, MinLength(1)]
+        [Required, MinLength(2)]
 		public string[] MediaFileExtensions
 		{
 			get => Model.MediaFilesExtensions;
@@ -75,35 +79,40 @@ namespace MediaCollector.ViewModels
 
 		public async Task CollectFiles()
 		{
-			IsBusy = true;
-			await ExtractArchive();
-			IsBusy = false;
-            
+            IsBusy = true;
+
+            try
+            {
+                await ExtractArchive();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+
         }
 
-		private async Task ExtractArchive()
-		{
-            var parser = new FileNameParser();
+        private async Task ExtractArchive()
+        {
             CancellationToken token = new CancellationToken();
 
-            if (_archive != null)
-            {
-                _extractService.FileExtracted += async (o, e) =>
-                {
-                    var fileName = parser.ExtractFileName(e.FileName);
-                    await CopyFiles(fileName, e.FileData);
-                    CurrentFile = e.FileName;
-
-                };
-
-                var archiveStream = await _archive.OpenReadAsync();
-                await _extractService.ExtractFiles(archiveStream, token);
-            }
+            var archiveStream = await _archive.OpenReadAsync();
+            await _extractService.ExtractFilesAsync(archiveStream, token);
         }
 
-        private async Task CopyFiles(string fileName, MemoryStream fileData)
+        private async Task CopyFile(string fileName, MemoryStream fileData)
         {
 			await _fileCopyService.CopyFilesAsync(TargetDirectory, fileName, fileData, null);
+        }
+
+        private async void OnFileExtracted(object sender, FileExtractedEventArgs e)
+        {
+            var fileName = _fileNameParser.ExtractFileName(e.FileName);
+            await CopyFile(fileName, e.FileData);
         }
     }
 }
