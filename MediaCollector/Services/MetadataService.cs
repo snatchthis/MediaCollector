@@ -6,8 +6,7 @@ namespace MediaCollector.Services
     {
         TAG_36867 = 36867,
         TAG_320 = 320,
-        TAG_3 = 3,
-        TAG_306 = 306
+        TAG_3 = 3
     }
 
     public class MetadataService
@@ -27,8 +26,7 @@ namespace MediaCollector.Services
                 var earliestDateTaken = directoriesWithPossibleDateTags
                     .Select(directory => GetDateFromTag(directory, DateTag.TAG_36867) ??
                                           GetDateFromTag(directory, DateTag.TAG_320) ??
-                                          GetDateFromTag(directory, DateTag.TAG_3) ??
-                                          GetDateFromTag(directory, DateTag.TAG_306))
+                                          GetDateFromTag(directory, DateTag.TAG_3))
                     .Where(dateTaken => dateTaken.HasValue)
                     .OrderBy(dateTaken => dateTaken.Value)
                     .FirstOrDefault();
@@ -49,8 +47,7 @@ namespace MediaCollector.Services
                 var allDirectories = ImageMetadataReader.ReadMetadata(filePath);
                 return allDirectories.Where(directory => directory.ContainsTag((int)DateTag.TAG_36867)
                                                       || directory.ContainsTag((int)DateTag.TAG_320)
-                                                      || directory.ContainsTag((int)DateTag.TAG_3)
-                                                      || directory.ContainsTag((int)DateTag.TAG_306));
+                                                      || directory.ContainsTag((int)DateTag.TAG_3));
             }
             catch (Exception ex)
             {
