@@ -30,6 +30,14 @@ public static class MauiProgram
 		builder.Services.AddSingleton<FileNameParser>();
 		builder.Services.AddSingleton<ExtractService>();
 		builder.Services.AddSingleton<IFilePickerService, TarFilePickerService>();
+		builder.Services.AddSingleton<MoveFilesToYearViewModel>();
+		builder.Services.AddSingleton<MoveFileToYearFolderService>();
+		builder.Services.AddSingleton<MoveSettings>();
+		builder.Services.AddSingleton<MoveFilesService>();
+		builder.Services.AddSingleton<MetadataSettings>();
+		builder.Services.AddSingleton<MetadataReaderViewModel>();
+		builder.Services.AddSingleton<AnyFilePickerService>();
+		builder.Services.AddSingleton<MetadataService>();
 
 #if MACCATALYST
 		builder.Services.AddTransient<IFolderPicker, MediaCollector.Platforms.MacCatalyst.FolderPicker>();
@@ -38,7 +46,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IFolderPicker, MediaCollector.Platforms.Windows.FolderPicker>();
 #endif
 
-		return builder.Build();
+        return builder.Build();
 	}
 }
 

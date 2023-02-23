@@ -1,0 +1,50 @@
+﻿@using MediaCollector.ViewModels
+@using MediaCollector.Data
+
+
+@inherits ContextComponent<MetadataReaderViewModel>
+<EditForm Model="@DataContext">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="container">
+        <h1>Read metadata</h1>
+        
+
+        <div class="form-group">
+            <label for="sourceFolder">Media file:</label>
+            <InputText type="text" class="form-control" id="sourceArchive" @onclick="DataContext.PickFile" @bind-Value="DataContext.File" disabled="@DataContext.IsBusy" />
+        </div>
+        <br />
+        
+        
+        <br />
+        <button class="btn btn-primary" type="submit" @onclick="DataContext.ReadMetadata" disabled="@DataContext.IsBusy">
+            @if (DataContext.IsBusy)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            }
+
+            @(DataContext.IsBusy ? "Reading..." : "Read Metadata")
+
+        </button>
+        <br />
+
+        <div class="form-group">
+            <label for="fileExtensions">Metadata:</label>
+            <table class="table table-striped">
+                <tbody>
+                    @foreach (var entry in DataContext.MetadataEntries)
+                    {
+                        <tr>
+                            <td>@entry.TagName</td>
+                            <td>@entry.Name</td>
+                            <td>@entry.Description</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+</EditForm>

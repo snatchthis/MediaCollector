@@ -1,0 +1,47 @@
+﻿@using MediaCollector.ViewModels
+@using MediaCollector.Data
+
+
+@inherits ContextComponent<MoveFilesToYearViewModel>
+<EditForm Model="@DataContext">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="container">
+        <h1>Move files</h1>
+        <br />
+        <h4>The files in the target folder will be grouped in sub-folders corresponding to the year of creation of the files they contain.</h4>
+
+        <div class="form-group">
+            <label for="sourceFolder">Source Folder:</label>
+            <InputText type="text" class="form-control" id="sourceArchive" @onclick="DataContext.PickSouceFolder" @bind-Value="DataContext.SourceFolder" disabled="@DataContext.IsBusy" />
+        </div>
+        <br />
+        <div class="form-group">
+            <label for="targetFolder">Target Folder:</label>
+            <InputText type="text" class="form-control" id="targetFolder" @onclick="DataContext.PickTargetFolder" @bind-Value="DataContext.TargetFolder" disabled="@DataContext.IsBusy" />
+        </div>
+        
+        <br />
+        <button class="btn btn-primary" type="submit" @onclick="DataContext.MoveFiles" disabled="@DataContext.IsBusy">
+            @if (DataContext.IsBusy)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            }
+
+            @(DataContext.IsBusy ? "Moving..." : "Move Files")
+
+        </button>
+        <br />
+
+        @if (DataContext.IsBusy)
+        {
+            <div class="form-group">
+
+                <label>@DataContext.ProcessedFile</label>
+
+            </div>
+        }
+
+
+    </div>
+</EditForm>

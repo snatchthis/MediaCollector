@@ -33,7 +33,6 @@ namespace MediaCollector.Services
                         {
                             await tarInputStream.CopyEntryContentsAsync(memoryStream, token);
                             memoryStream.Seek(0, SeekOrigin.Begin);
-                            
                             if (!tarEntry.IsDirectory && _settings.MediaFilesExtensions.Any(x => tarEntry.Name.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
                             { 
                                 OnFileExtracted(new FileExtractedEventArgs(tarEntry.Name, memoryStream));

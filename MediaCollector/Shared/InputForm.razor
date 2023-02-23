@@ -10,7 +10,7 @@
         <h1>File Copy Application</h1>
 
         <div class="form-group">
-            <label for="sourceFolder">Source Folder:</label>
+            <label for="sourceFolder">Source Archive:</label>
             <InputText type="text" class="form-control" id="sourceArchive" @onclick="DataContext.SelectArchive" @bind-Value="DataContext.SourceArchive" disabled="@DataContext.IsBusy" />
         </div>
         <br />
@@ -26,6 +26,7 @@
                 <option value=".png">PNG Images</option>
                 <option value=".heic">HEIC Images</option>
                 <option value=".gif">GIF Images</option>
+                <option value=".heiv">HEIV Videos</option>
                 <option value=".mp4">MP4 Videos</option>
                 <option value=".avi">AVI Videos</option>
                 <option value=".mov">MOV Videos</option>
